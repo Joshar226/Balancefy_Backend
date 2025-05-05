@@ -92,4 +92,64 @@ export class AuthController {
             res.status(500).json({error: 'There was an error'})
         }
     }
+
+    static forgotPassword = async (req: Request, res: Response) => {
+        const {email} = req.body
+        try {
+            const user = await User.findOne({email})
+            if(!user) {
+                const error = new Error('Email not found')
+                res.status(404).json({error: error.message})
+                return
+            }
+
+            user.token = generateToken()
+            await user.save()
+
+            AuthEmail.sendPasswordResetEmail({
+                email: user.email,
+                name: user.name,
+                token: user.token
+            })
+
+            res.send('Check your email for instructions')
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
+
+    static validateToken = async (req: Request, res: Response) => {
+        const {token} = req.body
+        try {
+            const user = await User.findOne({token})
+            if(!user) {
+                const error = new Error('Invalid Token')
+                res.status(404).json({error: error.message})
+                return
+            }
+            res.send('Token Validated')
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
+
+    static resetPassword = async (req: Request, res: Response) => {
+        const {token, password} = req.body
+        try {
+            const user = await User.findOne({token})
+            if(!user) {
+                const error = new Error('Invalid Token')
+                res.status(404).json({error: error.message})
+                return
+            }
+            
+            user.password = await hashPassword(password)
+            user.token = null
+
+            await user.save()
+            res.send('Password updated')
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
 }

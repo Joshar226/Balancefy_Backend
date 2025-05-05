@@ -41,6 +41,35 @@ router.post('/confirm-account',
     AuthController.confirmAccount
 )
 
+router.post('/forgot-password',
+    body('email')
+        .isEmail().withMessage('Invalid E-mail'),
+    handleInputErrors,
+    AuthController.forgotPassword
+)
+
+router.post('/validate-token',
+    body('token')
+        .notEmpty().withMessage('The token cannot be empty'),
+    handleInputErrors,
+    AuthController.validateToken
+)
+
+router.post('/reset-password',
+    body('token')
+        .isNumeric().withMessage('Invalid Token'),
+    body('password')   
+        .isLength({min: 8}).withMessage('The password is very short, minimum 8 characters'),
+    body('password_confirmation')
+        .custom((value, {req}) => {
+            if(value !== req.body.password) {
+                throw new Error('Passwords do not match')
+            }
+            return true
+        }),
+    handleInputErrors,
+    AuthController.resetPassword
+)
 
 
 export default router
