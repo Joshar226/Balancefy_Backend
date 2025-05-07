@@ -4,6 +4,7 @@ import Liability from "../models/Liability"
 export class LiabilityController {
     static createLiability = async (req: Request, res: Response) => {
         const liability = new Liability(req.body)
+        liability.owner = req.user.id
 
         try {
             await liability.save()
@@ -15,7 +16,7 @@ export class LiabilityController {
 
     static getAllLiabilities = async (req: Request, res: Response) => {
         try {
-            const liability = await Liability.find()
+            const liability = await Liability.find({owner: req.user.id})
             res.json(liability)
         } catch (error) {
             console.log(error)

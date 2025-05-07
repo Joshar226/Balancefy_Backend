@@ -7,10 +7,10 @@ import Income from "../models/Incomes"
 export class DashboardController {
     static getAllData = async (req: Request, res: Response) => {
         try {
-            const incomes = await Income.find()
-            const expenses = await Expense.find()
-            const assets = await Asset.find()
-            const liabilities = await Liability.find()
+            const incomes = await Income.find({owner: req.user.id})
+            const expenses = await Expense.find({owner: req.user.id})
+            const assets = await Asset.find({owner: req.user.id})
+            const liabilities = await Liability.find({owner: req.user.id})
 
             const data = {
                 incomes,
@@ -27,8 +27,8 @@ export class DashboardController {
 
     static getIncomeExpenseData = async (req: Request, res: Response) => {
         try {
-            const incomes = await Income.find()
-            const expenses = await Expense.find()
+            const incomes = await Income.find({owner: req.user.id})
+            const expenses = await Expense.find({owner: req.user.id})
 
             const data = {
                 incomes,

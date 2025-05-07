@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { handleInputErrors } from "../middleware/validation";
 import { AuthController } from "../controllers/AuthController";
+import { authenticate } from "../middleware/auth";
 
 const router = Router()
 
@@ -69,6 +70,39 @@ router.post('/reset-password',
         }),
     handleInputErrors,
     AuthController.resetPassword
+)
+
+router.get('/user',
+    authenticate,
+    AuthController.getUser
+)
+
+router.put('/update-profile',
+    authenticate,
+    body('name')
+        .notEmpty().withMessage('Your name cannot be empty'),
+    body('email')
+        .isEmail().withMessage('Invalid E-mail')
+        .notEmpty().withMessage('Your email cannot be empty'),
+    handleInputErrors,
+    AuthController.updateProfile
+)
+
+router.put('/update-password',
+    authenticate,
+    body('current_password')
+        .notEmpty().withMessage('Your current password is required'),
+    body('password')
+        .isLength({min: 8}).withMessage('The password is very short, minimun 8 characters'),
+    body('password_confirmation')
+        .custom((value, {req}) => {
+            if(value !== req.body.password) {
+                throw new Error('Password do not match')
+            }
+            return true
+        }),
+    handleInputErrors,
+    AuthController.updatePassword
 )
 
 

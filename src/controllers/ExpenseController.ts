@@ -4,6 +4,7 @@ import Expense from "../models/Expenses"
 export class ExpenseController {
     static createExpense = async (req: Request, res: Response) => {
         const expense = new Expense(req.body)
+        expense.owner = req.user.id
         try {
             await expense.save()
             res.send('Expense Created')
@@ -14,7 +15,7 @@ export class ExpenseController {
 
     static getAllExpenses = async (req: Request, res: Response) => {
         try {
-            const incomes = await Expense.find()
+            const incomes = await Expense.find({owner: req.user.id})
             res.json(incomes)
         } catch (error) {
             console.log(error)

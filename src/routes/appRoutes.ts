@@ -10,8 +10,11 @@ import { assetExist } from "../middleware/asset";
 import { LiabilityController } from "../controllers/LiabilityController";
 import { liabilityExist } from "../middleware/liability";
 import { DashboardController } from "../controllers/DashboardController";
+import { authenticate } from "../middleware/auth";
 
 const router = Router()
+
+router.use(authenticate)
 
 router.param('incomeId', incomeExist)
 router.param('expenseId', expenseExist)

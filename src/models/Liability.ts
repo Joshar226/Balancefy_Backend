@@ -1,8 +1,9 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export type LiabilityType = Document & {
     title: string,
-    value: number
+    value: number,
+    owner: Types.ObjectId
 }
 
 export const liabilitySchema : Schema = new Schema ({
@@ -13,6 +14,10 @@ export const liabilitySchema : Schema = new Schema ({
     value: {
         type: String,
         required: true
+    },
+    owner: {
+        type: Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamps: true})
 

@@ -4,6 +4,7 @@ export type IncomeType = Document & {
     title: string,
     value: number,
     date: Date
+    owner: Types.ObjectId
 }
 
 export const incomeSchema : Schema = new Schema({
@@ -20,6 +21,10 @@ export const incomeSchema : Schema = new Schema({
     date: {
         type: Date,
         default: () => Date.now()
+    },
+    owner: {
+        type: Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamps: true})
 

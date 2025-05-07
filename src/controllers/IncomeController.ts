@@ -4,6 +4,7 @@ import Income from "../models/Incomes"
 export class IncomeController {
     static createIncome = async (req: Request, res: Response) => {
         const income = new Income(req.body)
+        income.owner = req.user.id
 
         try {
             await income.save()
@@ -15,7 +16,7 @@ export class IncomeController {
 
     static getAllIncomes = async (req: Request, res: Response) => {
         try {
-            const incomes = await Income.find()
+            const incomes = await Income.find({owner: req.user.id})
             res.json(incomes)
         } catch (error) {
             console.log(error)

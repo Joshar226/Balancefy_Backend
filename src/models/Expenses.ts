@@ -3,7 +3,8 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 export type ExpenseType = Document & {
     title: string,
     value: number,
-    date: Date
+    date: Date,
+    owner: Types.ObjectId
 }
 
 export const expenseSchema : Schema = new Schema({
@@ -20,6 +21,10 @@ export const expenseSchema : Schema = new Schema({
     date: {
         type: Date,
         default: () => Date.now()
+    },
+    owner: {
+        type: Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamps: true})
 

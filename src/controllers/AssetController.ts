@@ -4,6 +4,7 @@ import Asset from "../models/Asset"
 export class AssetController {
     static createAsset = async (req: Request, res: Response) => {
         const asset = new Asset(req.body)
+        asset.owner = req.user.id
         try {
             await asset.save()
             res.send('Asset Created')
@@ -14,7 +15,7 @@ export class AssetController {
 
     static getAllAssets = async (req: Request, res: Response) => {
         try {
-            const assets = await Asset.find()
+            const assets = await Asset.find({owner: req.user.id})
             res.json(assets)
         } catch (error) {
             console.log(error)

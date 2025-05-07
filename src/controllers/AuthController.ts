@@ -4,6 +4,7 @@ import { generateToken } from "../utils/token"
 import User from "../models/User"
 import { AuthEmail } from "../emails/AuthEmail"
 import { generateJWT } from "../utils/jwt"
+import { log } from "node:console"
 
 export class AuthController {
     static createAccount = async (req: Request, res: Response) => {
@@ -148,6 +149,48 @@ export class AuthController {
 
             await user.save()
             res.send('Password updated')
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
+
+    static getUser = async (req: Request, res: Response) => {
+        try {
+            res.json(req.user)
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
+
+    static updateProfile = async (req: Request, res: Response) => {
+        const {name, email} = req.body
+        try {
+            req.user.name = name
+            req.user.email = email
+            
+            req.user.save()
+            res.send('Profile Updated')
+        } catch (error) {
+            res.status(500).json({error: 'There was an error'})
+        }
+    }
+
+    static updatePassword = async (req: Request, res: Response) => {
+        const {current_password, password} = req.body
+
+        try {
+
+            const isPasswordCorrect = await checkPassword(current_password, req.user.password)
+
+            if(!isPasswordCorrect) {
+                const error = new Error('Incorrect Current Password')
+                res.status(401).json({error: error.message})
+                return
+            }
+    
+            req.user.password = await hashPassword(password)
+            await req.user.save()
+            res.send('Password Updated')
         } catch (error) {
             res.status(500).json({error: 'There was an error'})
         }

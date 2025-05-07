@@ -2,7 +2,8 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 
 export type AssetType = Document & {
     title: string,
-    value: number
+    value: number,
+    owner: Types.ObjectId
 }
 
 export const assetSchema : Schema = new Schema({
@@ -13,6 +14,10 @@ export const assetSchema : Schema = new Schema({
     value: {
         type: String,
         required: true
+    },
+    owner: {
+        type: Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamps: true})
 
