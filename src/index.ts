@@ -1,7 +1,7 @@
 import server from "./server";
 
 const port = process.env.PORT || 4000
-const host = process.env.HOST || '192.168.0.13'
+const host = process.env.HOST || '192.168.0.14'
 
 
 server.listen(+port, host, () => {
